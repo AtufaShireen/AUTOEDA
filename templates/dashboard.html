@@ -1,0 +1,184 @@
+{% extends "dashbase.html" %}
+{% block title %}Overview{% endblock %}
+{%block style%}
+<style>
+  .imges {
+    align-content: space-around;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+
+  img {
+    width: 50%;
+  }
+
+  .imegs {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+
+  .dataframe {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .dataframe thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+  }
+
+  .dataframe th,
+  .dataframe td {
+    padding: 12px 15px;
+  }
+
+  .dataframe tbody tr {
+    border-bottom: thin solid #dddddd;
+  }
+
+  .dataframe tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+  }
+
+  .dataframe tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+  }
+
+  .dataframe tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+  }
+</style>
+{%endblock%}
+{% block content %}
+
+
+<div class="container">
+  <h2>Dynamic Tabs</h2>
+  <p>To make the tabs toggleable, add the data-toggle="tab" attribute to each link. Then add a .tab-pane class with a
+    unique ID for every tab and wrap them inside a div element with class .tab-content.</p>
+
+  <ul class="nav nav-tabs">
+    <li><a data-toggle="tab" href="#datainfo">Data Info</a></li>
+    <li class="active"><a data-toggle="tab" href="#numstats">Numerical Statistics</a></li>
+    <li><a data-toggle="tab" href="#catstats">Categorical Stats</a></li>
+    <li><a data-toggle="tab" href="#sample">Sample</a></li>
+    <li><a data-toggle="tab" href="#varover">Variable Overview</a></li>
+    <li><a data-toggle="tab" href="#correlations">Correlation</a></li>
+    <li><a data-toggle="tab" href="#miss_data">Missing Data</a></li>
+  </ul>
+  <div class="tab-content">
+    <div id="datainfo" class="tab-pane fade in active">
+      <h3>Data Overview</h3>
+      <p>Descriptio will be here</p>
+
+      {{data_info|safe}}
+      <form method="POST" action='/dashboard' >
+<input type="text" placeholder="Enter SQL QUERY" name="sql_query">
+      </form>
+    </div>
+    <div id="numstats" class="tab-pane fade in active">
+      <h3>Statistics of Numerical Data</h3>
+      <p>Descriptio will be here</p>
+      {{stats|safe}}
+    </div>
+
+    <div id="catstats" class="tab-pane fade">
+      <h3>Statistics of Categorical Data</h3>
+      {{cat_info|safe}}
+    </div>
+    <div id="sample" class="tab-pane fade">
+      <h3>Sample</h3>
+      <p>Frst and Last 5 records</p>
+      {{sample|safe}}
+    </div>
+    <div id="varover" class="tab-pane fade">
+      <h3>Variable Overview</h3>
+      <ul class="nav nav-tabs">
+        <li><a data-toggle="tab" href="#distribution">Distribution</a></li>
+        <li><a data-toggle="tab" href="#boxplots">BoxPlots</a></li>
+      </ul>
+      <div class="tab-content">
+        <div id="distribution" class="tab-pane fade">
+          <p>HistoGrams:</p>
+          <p>A histogram represents the distribution of variables by counting the number of observations</p>
+
+          <p>BoxPlots:</p>
+          <p>A Box Plot displays the summary of the set of data values
+            having properties like minimum, first quartile, median, third quartile and maximum.
+            The x-axis denotes the data to be plotted while the y-axis shows the frequency
+            distribution</p>
+          <ul class="nav nav-tabs">
+            {%for i in variables%}
+            <li><a data-toggle="tab" href="#{{i}}0">{{i}}</a></li>
+            {%endfor%}
+          </ul>
+
+          <div class="tab-content ">
+            {%for i in variables%}
+            <div id="{{i}}0" class="tab-pane fade">
+              <div class="imegs">
+                <img src='data:image/png;base64,{{hists[loop.index0]}}'>
+                <img src='data:image/png;base64,{{boxs[loop.index0]}}'>
+              </div>
+            </div>
+            {%endfor%}
+
+          </div>
+        </div>
+        <div id="boxplots" class="tab-pane fade">
+
+          <ul class="nav nav-tabs">
+            {%for i in variables%}
+            <li><a data-toggle="tab" href="#{{i}}1">{{i}}</a></li>
+            {%endfor%}
+          </ul>
+
+          <div class="tab-content">
+            {%for i in variables%}
+            <div id="{{i}}1" class="tab-pane fade">
+
+            </div>
+            {%endfor%}
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="miss_data" class="tab-pane fade">
+      <h3>Missing Values</h3>
+      <img src='data:image/png;base64,{{missing_data}}'>
+    </div>
+    <div id="correlations" class="tab-pane fade">
+      <h3>Correlation</h3>
+      <ul class="nav nav-tabs">
+        <li><a data-toggle="tab" href="#distribution">Distribution</a></li>
+        <li><a data-toggle="tab" href="#boxplots">BoxPlots</a></li>
+      </ul>
+      <div class="tab-content">
+        <div id="distribution" class="tab-pane fade">
+
+
+        </div>
+      </div>
+      <div id="boxplots" class="tab-pane fade">
+
+
+
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+{% endblock %}
